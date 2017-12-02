@@ -13,16 +13,16 @@ CORS(app)
 mysql.init_app(app)
 
 
-@app.route('/registrarUsuario', methods=['POST'])
+@app.route('/registrarusuario', methods=['POST'])
 def registrarUsuario():
     if request.method == 'POST':  
         json = request.get_json()
         idUsuario = inserirUsuario(json)
         
         if (idUsuario):
-            return jsonify({'Resposta' : {"Id_Usuario":str(idUsuario)}})
+            return str(idUsuario)
         else:
-            return jsonify({'Error' : 'Não foi possivel cadastar'})
+            return str('ERROR')
 
 @app.route('/verificarUsuarioCadastrado', methods=['POST'])
 def verificarUsuario():
@@ -31,9 +31,9 @@ def verificarUsuario():
         idUsuario = verificarUsuarioCadastrado(json)
         
         if (idUsuario):
-            return jsonify({'Resposta' : {"Id_Usuario":str(idUsuario)}})
+            return str(idUsuario)
         else:
-            return jsonify({'Resposta' : 0})
+            return str('ERROR')
 
 
 @app.route('/registrarAlerta', methods=['POST'])
@@ -43,9 +43,9 @@ def registrarAlerta():
         idAlerta = inserirAlerta(json)
         
         if (idAlerta):
-            return jsonify({'Resposta' : {"Id_Alerta":str(idAlerta)}})
+            return str(idAlerta)
         else:
-            return jsonify({'Error' : 'Não foi possivel cadastar'})
+            return str('ERROR')
 
 @app.route('/registrarGrupo', methods=['POST'])
 def registrarGrupo():
@@ -54,9 +54,9 @@ def registrarGrupo():
         idGrupo = inserirGrupo(json)
         
         if (idGrupo):
-            return jsonify({'Resposta' : {"Id_Grupo":str(idGrupo)}})
+            return str(idGrupo)
         else:
-            return jsonify({'Error' : 'Não foi possivel cadastar'})
+            return str('ERROR')
 
 @app.route('/getTodosGrupos', methods=['GET'])
 def pegarTodosGrupos():
@@ -66,11 +66,23 @@ def pegarTodosGrupos():
             
             return jsonify(resp)
         else:
-            return jsonify({'error' : 'Não foi possivel listar grupos'})
+            return str('ERROR')
+        
+
+@app.route('/login',methods=['POST'])
+def login_company():
+    if request.method == 'POST':
+        json_login = request.get_json()
+        print(json_login)
+        usuario = getUsuario (json_login)
+        if (usuario):
+            
+            return str(usuario)
+        else:
+            return str('ERROR')
         
 
 
-
 if __name__ == '__main__' :
-    app.run()
+    app.run(host="10.98.1.107")
 

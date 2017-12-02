@@ -34,6 +34,7 @@ TABELA_GRUPOS_DONO_ID = 'ID_Dono'
 TABELA_GRUPOS_LOCAL_DESTINO = 'Destino'
 TABELA_GRUPOS_LOCAL_PARTIDA = 'Local_Partida'
 TABELA_GRUPOS_DESCRICAO = 'Descricao'
+TABELA_GRUPOS_QUANTIDADE = 'Quantidade'
 
 TABELA_USUARIO_GRUPO_ID ='ID'
 TABELA_USUARIO_GRUPO_ID_USUARIO = 'ID_Usuario'
@@ -57,10 +58,10 @@ class Usuario(Base):
     __tablename__= TABELA_USUARIO
 
     id= Column(TABELA_USUARIO_ID,Integer,primary_key=True)
-    cpf = Column(TABELA_USUARIO_CPF, String(255),nullable=False)
+    cpf = Column(TABELA_USUARIO_CPF, String(255),nullable=True)
     usuario = Column(TABELA_USUARIO_LOGIN,String(255), nullable=False)
     senha= Column(TABELA_USUARIO_SENHA, String(255), nullable= False)
-    email = Column(TABELA_USUARIO_EMAIL,String(255),nullable=False)
+    email = Column(TABELA_USUARIO_EMAIL,String(255),nullable=True)
     nome = Column(TABELA_USUARIO_NOME_COMPLETO,String(255), nullable=False)
 
 class Alerta(Base):
@@ -81,6 +82,7 @@ class Grupo(Base):
     destino = Column(TABELA_GRUPOS_LOCAL_DESTINO, Integer,ForeignKey(Local.id), nullable= False)
     dataPartida = Column(TABELA_GRUPOS_DATA_PARTIDA,DateTime,nullable=False)
     localPartida= Column(TABELA_GRUPOS_LOCAL_PARTIDA, Integer,ForeignKey(Local.id), nullable= False)
+    quantidade = Column(TABELA_GRUPOS_QUANTIDADE, Integer)
 
 class UsuarioGrupo(Base):
     __tablename__= TABELA_USUARIO_GRUPO
@@ -132,7 +134,7 @@ def inserirUsuario(json_adress):
 def verificarUsuarioCadastrado(json):
     Session = getSession()
     session=Session()
-    response=session.query(Usuario).filter(Usuario.cpf == json[TABELA_USUARIO_CPF]).all()
+    response=session.query(Usuario).filter(Usuario.usuario == json[TABELA_USUARIO_LOGIN]).all()
     if len(response)==1:
         r=response[0]
         return r.id
@@ -164,6 +166,7 @@ def inserirGrupo(json_adress):
     grupo.dataPartida=datetime.strptime(json_adress[TABELA_GRUPOS_DATA_PARTIDA],'%d-%m-%Y %H:%M')
     grupo.destino=json_adress[TABELA_GRUPOS_LOCAL_DESTINO]
     grupo.localPartida=json_adress[TABELA_GRUPOS_LOCAL_PARTIDA]
+    grupo.quantidade=json_adress[TABELA_GRUPOS_QUANTIDADE]
     session.add(grupo)
     session.commit()
     session.refresh(grupo)
@@ -175,9 +178,25 @@ def getTodosGrupos():
     Session=getSession()
     session=Session()
     response=session.query(Grupo).all()
+    result = []
+    for r in response:
+        result.append({TABELA_GRUPOS_QUANTIDADE:r.quantidade,TABELA_GRUPOS_ID:r.id,TABELA_GRUPOS_DATA_PARTIDA:r.dataPartida,TABELA_GRUPOS_LOCAL_DESTINO:r.destino,TABELA_GRUPOS_DONO_ID:r.dono,TABELA_GRUPOS_DESCRICAO:r.descricao,TABELA_GRUPOS_DATA_PARTIDA:r.dataPartida})
+    return result
+
+def getUsuario(json_company):
+    login=json_company['Login']
+    senha=json_company['Senha']
+    Session=getSession()
+    session=Session()
+    response= session.query(Usuario).filter(Usuario.usuario == login , Usuario.senha==senha).all()
+    if len(response)==1:
+        c=response[0]
+        dicCompany=1
+        response= dicCompany
+    else:
+        response=False
     return response
 
 
-    
 
 
