@@ -206,12 +206,7 @@ def getLocal(id):
     response=session.query(Local).filter(Local.id == id).all()
     print(response[0].nome)
     return response[0].nome
-
-def getLocal(nome):
-    Session = getSession()
-    session=Session()
-    response=session.query(Local).filter(Local.nome == nome).all()
-    return response[0].id
+    
     
 
 
