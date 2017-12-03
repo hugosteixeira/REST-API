@@ -91,7 +91,17 @@ def getLocais():
             return str(locais)
         else:
             return str('ERROR')
-        
+
+@app.route('/getlocal',methods=['POST'])
+def getLocal():
+    if request.method == 'POST':
+        json_locais = request.get_json()
+        locais = getLocal (json_locais)
+        if (locais):
+            
+            return str(locais)
+        else:
+            return str('ERROR')
 
 
 if __name__ == '__main__' :

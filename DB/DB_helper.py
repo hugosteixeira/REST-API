@@ -82,7 +82,7 @@ class Grupo(Base):
     destino = Column(TABELA_GRUPOS_LOCAL_DESTINO, Integer,ForeignKey(Local.id), nullable= False)
     dataPartida = Column(TABELA_GRUPOS_DATA_PARTIDA,DateTime,nullable=False)
     localPartida= Column(TABELA_GRUPOS_LOCAL_PARTIDA, Integer,ForeignKey(Local.id), nullable= False)
-    quantidade = Column(TABELA_GRUPOS_QUANTIDADE, Integer)
+    quantidade = Column(TABELA_GRUPOS_QUANTIDADE, Integer,nullable=True)
 
 class UsuarioGrupo(Base):
     __tablename__= TABELA_USUARIO_GRUPO
@@ -178,9 +178,12 @@ def getTodosGrupos():
     Session=getSession()
     session=Session()
     response=session.query(Grupo).all()
-    result = []
+    result = {}
+    counter=0
     for r in response:
-        result.append({TABELA_GRUPOS_QUANTIDADE:r.quantidade,TABELA_GRUPOS_ID:r.id,TABELA_GRUPOS_DATA_PARTIDA:r.dataPartida,TABELA_GRUPOS_LOCAL_DESTINO:r.destino,TABELA_GRUPOS_DONO_ID:r.dono,TABELA_GRUPOS_DESCRICAO:r.descricao,TABELA_GRUPOS_DATA_PARTIDA:r.dataPartida})
+        result[counter]={TABELA_GRUPOS_QUANTIDADE:r.quantidade,TABELA_GRUPOS_ID:r.id,TABELA_GRUPOS_DATA_PARTIDA:r.dataPartida,TABELA_GRUPOS_LOCAL_DESTINO:getLocal(r.destino),TABELA_GRUPOS_DONO_ID:r.dono,TABELA_GRUPOS_DESCRICAO:r.descricao,TABELA_GRUPOS_LOCAL_PARTIDA:getLocal(r.localPartida)}
+        counter+=1
+    print(result)
     return result
 
 def getUsuario(json_company):
@@ -197,18 +200,18 @@ def getUsuario(json_company):
         response=False
     return response
 
-def getLocal(json):
+def getLocal(id):
     Session = getSession()
     session=Session()
-    resultado=[]
-    for x in json:
-        response=session.query(Local).filter(Local.id == x['id']).all()
-        for r in response:
-            resultado.append({TABELA_LOCAIS_ID:r.id,TABELA_LOCAIS_NOME:r.nome,TABELA_LOCAIS_LATITUDE:r.latitude,TABELA_LOCAIS_LONGITUDE:r.longitude})
-    if len(resultado)>=1:
-        return resultado
-    else:
-        return False
+    response=session.query(Local).filter(Local.id == id).all()
+    print(response[0].nome)
+    return response[0].nome
+
+def getLocal(nome):
+    Session = getSession()
+    session=Session()
+    response=session.query(Local).filter(Local.nome == nome).all()
+    return response[0].id
     
 
 
