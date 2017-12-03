@@ -197,6 +197,18 @@ def getUsuario(json_company):
         response=False
     return response
 
-
+def getLocal(json):
+    Session = getSession()
+    session=Session()
+    resultado=[]
+    for x in json:
+        response=session.query(Local).filter(Local.id == x['id']).all()
+        for r in response:
+            resultado.append({TABELA_LOCAIS_ID:r.id,TABELA_LOCAIS_NOME:r.nome,TABELA_LOCAIS_LATITUDE:r.latitude,TABELA_LOCAIS_LONGITUDE:r.longitude})
+    if len(resultado)>=1:
+        return resultado
+    else:
+        return False
+    
 
 

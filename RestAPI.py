@@ -47,7 +47,7 @@ def registrarAlerta():
         else:
             return str('ERROR')
 
-@app.route('/registrarGrupo', methods=['POST'])
+@app.route('/registrargrupo', methods=['POST'])
 def registrarGrupo():
     if request.method == 'POST':  
         json = request.get_json()
@@ -58,9 +58,9 @@ def registrarGrupo():
         else:
             return str('ERROR')
 
-@app.route('/getTodosGrupos', methods=['GET'])
+@app.route('/gettodosgrupos', methods=['POST'])
 def pegarTodosGrupos():
-    if request.method == 'GET':
+    if request.method == 'POST':
         resp = getTodosGrupos ()
         if (resp):
             
@@ -70,14 +70,25 @@ def pegarTodosGrupos():
         
 
 @app.route('/login',methods=['POST'])
-def login_company():
+def loginUsuario():
     if request.method == 'POST':
         json_login = request.get_json()
-        print(json_login)
+
         usuario = getUsuario (json_login)
         if (usuario):
             
             return str(usuario)
+        else:
+            return str('ERROR')
+
+@app.route('/getlocais',methods=['POST'])
+def getLocais():
+    if request.method == 'POST':
+        json_locais = request.get_json()
+        locais = getLocal (json_locais)
+        if (locais):
+            
+            return str(locais)
         else:
             return str('ERROR')
         
